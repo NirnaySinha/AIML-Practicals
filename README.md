@@ -42,7 +42,6 @@ Each experiment is organized into its own directory containing the source code a
 ## Technologies Used
 
 - Prolog
-- Python
 - Artificial Intelligence Search Algorithms
 - Constraint Satisfaction Problems (CSP)
 - Git and GitHub
