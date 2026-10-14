@@ -1,18 +1,16 @@
 
 :- use_module(library(random)).
 
-% Objective function
 objective(X, Value) :-
     Value is -((X - 3) * (X - 3)) + 10 * sin(2 * X).
 
-% Simulated Annealing
-simulated_annealing(Current, Temperature, Best, BestValue) :-
+simulated_annealing(Current, Temperature, BestSoFar, BestX) :-
     Temperature > 0.1,
     !,
     random_member(Step, [-1, 1]),
     Candidate is Current + Step,
     (
-        Candidate < -10 ; Candidate > 10
+        (Candidate < -10 ; Candidate > 10)
     ->
         Next = Current
     ;
@@ -27,7 +25,7 @@ simulated_annealing(Current, Temperature, Best, BestValue) :-
         Updated = Next
     ;
         Probability is exp(Difference / Temperature),
-        random_float(Random),
+        Random is random_float,
         (
             Random < Probability
         ->
@@ -36,21 +34,20 @@ simulated_annealing(Current, Temperature, Best, BestValue) :-
             Updated = Current
         )
     ),
-    objective(Best, OldBestValue),
+    objective(BestSoFar, BestValue),
     (
-        NextValue > OldBestValue
+        NextValue > BestValue
     ->
         NewBest = Next
     ;
-        NewBest = Best
+        NewBest = BestSoFar
     ),
     NewTemperature is Temperature * 0.95,
     simulated_annealing(
-        Updated, NewTemperature, NewBest, BestValue
+        Updated, NewTemperature, NewBest, BestX
     ).
 
-simulated_annealing(_, _, Best, BestValue) :-
-    objective(Best, BestValue).
+simulated_annealing(_, _, Best, Best).
 
 run :-
     Start = 0,
